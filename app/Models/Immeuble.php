@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Immeuble extends Model
@@ -25,3 +26,4 @@ class Immeuble extends Model
     {
         return $this->hasMany(Appartement::class);
     }
+}
