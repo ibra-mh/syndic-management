@@ -13,8 +13,12 @@ return new class extends Migration
     {
         Schema::create('appartements', function (Blueprint $table) {
             $table->id();
-            $table->string('nom_app');
-            $table->foreignId('immeuble_id')->constrained('immeubles')->onDelete('cascade');
+            $table->string('numero');
+            $table->integer('etage');
+            $table->decimal('surface', 8, 2);
+            $table->enum('status', ['occupé', 'vacant'])->default('vacant');
+            $table->foreignId('immeuble_id')->constrained()->onDelete('cascade');
+            $table->foreignId('proprietaire_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
     }

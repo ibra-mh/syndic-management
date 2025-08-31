@@ -20,7 +20,9 @@ class TrancheController extends Controller
      */
     public function index()
     {
-        $tranches = Tranche::with('immeubles')->get();
+        $tranches = Tranche::withCount('immeubles')
+            ->latest()
+            ->get();
         return view('admin.tranches.index', compact('tranches'));
     }
 
@@ -38,7 +40,9 @@ class TrancheController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nom_tranche' => 'required|string|max:255|unique:tranches'
+            'nom_tranche' => 'required|string|max:255|unique:tranches',
+            'description' => 'nullable|string',
+            'status' => 'required|in:actif,inactif'
         ]);
 
         Tranche::create($validated);
@@ -52,7 +56,9 @@ class TrancheController extends Controller
      */
     public function show(Tranche $tranche)
     {
-        $tranche->load('immeubles');
+        $tranche->load(['immeubles' => function($query) {
+            $query->withCount('appartements');
+        }]);
         return view('admin.tranches.show', compact('tranche'));
     }
 
@@ -70,7 +76,9 @@ class TrancheController extends Controller
     public function update(Request $request, Tranche $tranche)
     {
         $validated = $request->validate([
-            'nom_tranche' => 'required|string|max:255|unique:tranches,nom_tranche,' . $tranche->id
+            'nom_tranche' => 'required|string|max:255|unique:tranches,nom_tranche,' . $tranche->id,
+            'description' => 'nullable|string',
+            'status' => 'required|in:actif,inactif'
         ]);
 
         $tranche->update($validated);

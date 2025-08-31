@@ -1,10 +1,17 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\ImmeubleController;
+use App\Http\Controllers\TrancheController;
+use App\Http\Controllers\AppartementController;
+use App\Http\Controllers\CotisationController;
+use App\Http\Controllers\DepenseController;
+use App\Http\Controllers\ExpenseTypeController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('admin.dashboard');
 });
 
 // Authentication Routes
@@ -19,18 +26,24 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     
     // Client Dashboard Route
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'admin'])->name('dashboard');
     
     // Admin Routes
     Route::middleware('admin')->prefix('admin')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard');
-        })->name('admin.dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'admin'])->name('admin.dashboard');
         
-        // Sections Management
+        // Resources Management
         Route::resource('tranches', TrancheController::class);
         Route::resource('immeubles', ImmeubleController::class);
+        Route::resource('appartements', AppartementController::class);
+        Route::resource('cotisations', CotisationController::class);
+        Route::resource('depenses', DepenseController::class);
+        Route::resource('expense-types', ExpenseTypeController::class);
+        
+        // AJAX Routes for dynamic dropdowns
+        Route::get('/ajax/immeubles-by-tranche', [CotisationController::class, 'getImmeublesbyTranche'])
+            ->name('ajax.immeubles-by-tranche');
+        Route::get('/ajax/appartements-by-immeuble', [CotisationController::class, 'getAppartementsByImmeuble'])
+            ->name('ajax.appartements-by-immeuble');
     });
 });

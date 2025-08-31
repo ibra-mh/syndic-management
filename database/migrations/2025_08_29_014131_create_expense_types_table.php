@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('expense_types', function (Blueprint $table) {
             $table->id();
-            $table->string('type_name');
+            $table->string('nom_type')->unique();
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

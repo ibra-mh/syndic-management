@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Immeuble;
+use App\Models\Tranche;
 use Illuminate\Http\Request;
 
 class ImmeubleController extends Controller
@@ -11,7 +13,12 @@ class ImmeubleController extends Controller
      */
     public function index()
     {
-        //
+        $immeubles = Immeuble::with(['tranche', 'appartements'])
+            ->withCount('appartements')
+            ->latest()
+            ->paginate(10);
+
+        return view('admin.immeubles.index', compact('immeubles'));
     }
 
     /**
@@ -19,46 +26,61 @@ class ImmeubleController extends Controller
      */
     public function create()
     {
-        //
+        $tranches = Tranche::all();
+        return view('admin.immeubles.create', compact('tranches'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'nom_immeuble' => 'required|string|max:255',
+            'tranche_id' => 'required|exists:tranches,id',
+            'nombre_etages' => 'required|integer|min:1',
+            'nombre_appartements' => 'required|integer|min:1',
+            'description' => 'nullable|string',
+            'status' => 'required|in:actif,inactif'
+        ]);
+
+        Immeuble::create($validated);
+
+        return redirect()->route('immeubles.index')
+            ->with('success', 'Immeuble ajouté avec succès.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Immeuble $immeuble)
     {
-        //
+        $immeuble->load(['tranche', 'appartements.proprietaire']);
+        return view('admin.immeubles.show', compact('immeuble'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit(Immeuble $immeuble)
     {
-        //
+        $tranches = Tranche::all();
+        return view('admin.immeubles.edit', compact('immeuble', 'tranches'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Immeuble $immeuble)
     {
-        //
+        $validated = $request->validate([
+            'nom_immeuble' => 'required|string|max:255',
+            'tranche_id' => 'required|exists:tranches,id',
+            'nombre_etages' => 'required|integer|min:1',
+            'nombre_appartements' => 'required|integer|min:1',
+            'description' => 'nullable|string',
+            'status' => 'required|in:actif,inactif'
+        ]);
+
+        $immeuble->update($validated);
+
+        return redirect()->route('immeubles.show', $immeuble->id)
+            ->with('success', 'Immeuble modifié avec succès.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Immeuble $immeuble)
     {
-        //
+        $immeuble->delete();
+
+        return redirect()->route('immeubles.index')
+            ->with('success', 'Immeuble supprimé avec succès.');
     }
 }

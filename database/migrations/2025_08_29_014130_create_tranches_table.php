@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('tranches', function (Blueprint $table) {
             $table->id();
+            $table->string('nom_tranche')->unique();
+            $table->text('description')->nullable();
+            $table->enum('status', ['actif', 'inactif'])->default('actif');
             $table->timestamps();
         });
     }

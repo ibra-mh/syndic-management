@@ -15,6 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('nom_immeuble');
             $table->foreignId('tranche_id')->constrained('tranches')->onDelete('cascade');
+            $table->integer('nombre_etages')->default(1);
+            $table->integer('nombre_appartements')->default(1);
+            $table->text('description')->nullable();
+            $table->enum('status', ['actif', 'inactif'])->default('actif');
             $table->timestamps();
         });
     }
