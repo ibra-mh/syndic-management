@@ -1,13 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'Gestion des Cotisations')
+@section('page-title', 'Gestion des Cotisations')
 
 @section('content')
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h3 mb-0 text-gray-800">Gestion des Cotisations</h1>
+            <div class="d-flex justify-content-end align-items-center mb-4">
                 @if(auth()->user()->isAdmin())
                     <a href="{{ route('cotisations.create') }}" class="btn btn-primary">
                         <i class="fas fa-plus"></i> Ajouter une Cotisation

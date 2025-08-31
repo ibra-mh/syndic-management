@@ -1,9 +1,10 @@
 @extends('layouts.app')
 
+@section('page-title', 'Gestion des Appartements')
+
 @section('content')
-<div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Gestion des Appartements</h1>
+<div class="container-fluid">
+    <div class="d-flex justify-content-end align-items-center mb-4">
         <button class="btn btn-primary" onclick="loadModal('{{ route('appartements.create') }}')">
             <i class="fas fa-plus"></i> Nouvel Appartement
         </button>

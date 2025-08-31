@@ -1,13 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'Gestion des Immeubles')
+@section('page-title', 'Gestion des Immeubles')
 
 @section('content')
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h3 mb-0 text-gray-800">Gestion des Immeubles</h1>
+            <div class="d-flex justify-content-end align-items-center mb-4">
                 @if(auth()->user()->isAdmin())
                     <a href="{{ route('immeubles.create') }}" class="btn btn-primary">
                         <i class="fas fa-plus"></i> Ajouter un Immeuble

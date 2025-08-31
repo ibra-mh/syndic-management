@@ -1,65 +1,87 @@
-@extends('layouts.app')
+<!-- Modal Header -->
+<div class="modal-header">
+    <h5 class="modal-title">
+        <i class="fas fa-layer-group"></i> Détails de la Tranche: {{ $tranche->nom_tranche }}
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
 
-@section('content')
-<div class="container">
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <h2>Section Details: {{ $tranche->nom_tranche }}</h2>
-        </div>
-        <div class="col-md-4 text-end">
-            <a href="{{ route('tranches.index') }}" class="btn btn-secondary">Back to List</a>
-            @if(auth()->user()->isAdmin())
-                <a href="{{ route('tranches.edit', $tranche) }}" class="btn btn-warning">Edit Section</a>
-            @endif
-        </div>
-    </div>
-
+<!-- Modal Body -->
+<div class="modal-body">
     <div class="row">
-        <div class="col-md-4">
-            <div class="card mb-4">
+        <div class="col-md-6">
+            <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Section Information</h5>
-                    <p><strong>Name:</strong> {{ $tranche->nom_tranche }}</p>
-                    <p><strong>Created:</strong> {{ $tranche->created_at->format('Y-m-d') }}</p>
-                    <p><strong>Last Updated:</strong> {{ $tranche->updated_at->format('Y-m-d') }}</p>
-                    <p><strong>Total Buildings:</strong> {{ $tranche->immeubles->count() }}</p>
+                    <h6 class="card-title text-primary">
+                        <i class="fas fa-info-circle"></i> Informations Générales
+                    </h6>
+                    <table class="table table-borderless table-sm">
+                        <tr>
+                            <td><strong>Nom:</strong></td>
+                            <td>{{ $tranche->nom_tranche }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Description:</strong></td>
+                            <td>{{ $tranche->description ?? 'Non spécifiée' }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Créé le:</strong></td>
+                            <td>{{ $tranche->created_at->format('d/m/Y à H:i') }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Modifié le:</strong></td>
+                            <td>{{ $tranche->updated_at->format('d/m/Y à H:i') }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total Immeubles:</strong></td>
+                            <td><span class="badge bg-info">{{ $tranche->immeubles->count() }}</span></td>
+                        </tr>
+                    </table>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-8">
+        <div class="col-md-6">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Buildings in this Section</h5>
+                    <h6 class="mb-0 text-primary">
+                        <i class="fas fa-building"></i> Immeubles de cette Tranche
+                    </h6>
                     @if(auth()->user()->isAdmin())
-                        <a href="{{ route('immeubles.create', ['tranche_id' => $tranche->id]) }}" class="btn btn-primary btn-sm">Add Building</a>
+                        <button class="btn btn-primary btn-sm" onclick="loadModal('{{ route('immeubles.create', ['tranche_id' => $tranche->id]) }}')">
+                            <i class="fas fa-plus"></i> Ajouter Immeuble
+                        </button>
                     @endif
                 </div>
                 <div class="card-body">
                     @if($tranche->immeubles->count() > 0)
                         <div class="table-responsive">
-                            <table class="table">
-                                <thead>
+                            <table class="table table-sm">
+                                <thead class="table-light">
                                     <tr>
-                                        <th>Name</th>
-                                        <th>Apartments</th>
+                                        <th>Nom</th>
+                                        <th>Appartements</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($tranche->immeubles as $immeuble)
                                         <tr>
-                                            <td>{{ $immeuble->nom_immeuble }}</td>
-                                            <td>{{ $immeuble->appartements_count ?? $immeuble->appartements->count() }}</td>
+                                            <td><strong>{{ $immeuble->nom_immeuble }}</strong></td>
                                             <td>
-                                                <a href="{{ route('immeubles.show', $immeuble) }}" class="btn btn-sm btn-info">View</a>
+                                                <span class="badge bg-secondary">{{ $immeuble->appartements_count ?? $immeuble->appartements->count() }}</span>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-info" onclick="loadModal('{{ route('immeubles.show', $immeuble) }}', 'viewModal')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
                                                 @if(auth()->user()->isAdmin())
-                                                    <a href="{{ route('immeubles.edit', $immeuble) }}" class="btn btn-sm btn-warning">Edit</a>
-                                                    <form action="{{ route('immeubles.destroy', $immeuble) }}" method="POST" class="d-inline">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
-                                                    </form>
+                                                    <button class="btn btn-sm btn-warning" onclick="loadModal('{{ route('immeubles.edit', $immeuble) }}')">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-danger" onclick="confirmDelete('{{ route('immeubles.destroy', $immeuble) }}', 'Supprimer cet immeuble ?')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
                                                 @endif
                                             </td>
                                         </tr>
@@ -68,11 +90,30 @@
                             </table>
                         </div>
                     @else
-                        <p class="text-muted">No buildings added to this section yet.</p>
+                        <div class="text-center text-muted py-3">
+                            <i class="fas fa-building fa-2x mb-2"></i>
+                            <p>Aucun immeuble dans cette tranche.</p>
+                            @if(auth()->user()->isAdmin())
+                                <button class="btn btn-primary btn-sm" onclick="loadModal('{{ route('immeubles.create', ['tranche_id' => $tranche->id]) }}')">
+                                    <i class="fas fa-plus"></i> Ajouter le premier immeuble
+                                </button>
+                            @endif
+                        </div>
                     @endif
                 </div>
             </div>
         </div>
     </div>
 </div>
-@endsection
+
+<!-- Modal Footer -->
+<div class="modal-footer">
+    @if(auth()->user()->isAdmin())
+        <button type="button" class="btn btn-warning" onclick="loadModal('{{ route('tranches.edit', $tranche) }}')">
+            <i class="fas fa-edit"></i> Modifier la Tranche
+        </button>
+    @endif
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+        <i class="fas fa-times"></i> Fermer
+    </button>
+</div>
