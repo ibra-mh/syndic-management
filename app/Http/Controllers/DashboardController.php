@@ -10,6 +10,16 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
+    public function index()
+    {
+        if (auth()->user()->isAdmin()) {
+            return $this->admin(request());
+        }
+        
+        // For regular users, show a simple dashboard
+        return view('dashboard');
+    }
+    
     public function admin(Request $request)
     {
         // Calculer les statistiques
