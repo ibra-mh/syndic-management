@@ -72,9 +72,6 @@
                                                 <span class="badge bg-secondary">{{ $immeuble->appartements_count ?? $immeuble->appartements->count() }}</span>
                                             </td>
                                             <td>
-                                                <button class="btn btn-sm btn-info" onclick="loadModal('{{ route('immeubles.show', $immeuble) }}', 'viewModal')">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
                                                 @if(auth()->user()->isAdmin())
                                                     <button class="btn btn-sm btn-warning" onclick="loadModal('{{ route('immeubles.edit', $immeuble) }}')">
                                                         <i class="fas fa-edit"></i>

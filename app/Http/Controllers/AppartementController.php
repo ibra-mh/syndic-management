@@ -12,7 +12,7 @@ class AppartementController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('admin');
+        $this->middleware('admin')->except(['index', 'show']);
     }
 
     /**
@@ -34,7 +34,7 @@ class AppartementController extends Controller
         }
 
         if ($request->filled('nom_app')) {
-            $query->where('nom_app', 'like', '%' . $request->nom_app . '%');
+            $query->where('numero', 'like', '%' . $request->nom_app . '%');
         }
 
         $appartements = $query->orderBy('immeuble_id')
@@ -58,7 +58,7 @@ class AppartementController extends Controller
 
         // Check if request is for modal
         if ($request->ajax() || $request->has('modal')) {
-            return view('admin.appartements.create-modal', compact('tranches', 'immeubles'));
+            return view('admin.appartements.create', compact('tranches', 'immeubles'));
         }
 
         return view('admin.appartements.create', compact('tranches', 'immeubles'));

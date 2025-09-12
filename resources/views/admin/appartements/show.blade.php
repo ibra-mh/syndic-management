@@ -1,4 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.admin')
+
+@section('page-title', 'Détails de l\'Appartement')
 
 @section('content')
 <div class="container">
@@ -13,7 +15,7 @@
                         <div class="col-md-6">
                             <h5>Informations de base</h5>
                             <p><strong>ID:</strong> {{ $appartement->id }}</p>
-                            <p><strong>Nom:</strong> {{ $appartement->nom_app }}</p>
+                            <p><strong>Nom:</strong> {{ $appartement->numero }}</p>
                             <p><strong>Immeuble:</strong> {{ $appartement->immeuble->nom_immeuble ?? 'N/A' }}</p>
                             <p><strong>Tranche:</strong> {{ $appartement->immeuble->tranche->nom_tranche ?? 'N/A' }}</p>
                         </div>

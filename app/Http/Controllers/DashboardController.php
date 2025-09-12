@@ -16,8 +16,34 @@ class DashboardController extends Controller
             return $this->admin(request());
         }
         
-        // For regular users, show a simple dashboard
-        return view('dashboard');
+        // For regular users (clients), show client dashboard
+        return $this->client();
+    }
+    
+    public function client()
+    {
+        // For clients, show same views as admin but without action buttons
+        $user = auth()->user();
+        
+        // Same data as admin but with client view flag
+        $totalCotisations = Cotisation::sum('montant_garage') + Cotisation::sum('montant_boxe') + Cotisation::sum('montant_appartement');
+        $totalDepenses = Depense::sum('montant');
+        $totalAppartements = Appartement::count();
+        
+        $expenseTypes = ExpenseType::all();
+        $depenses = Depense::with('expenseType')->orderBy('date', 'desc')->get();
+        $cotisations = Cotisation::with('appartement')->orderBy('created_at', 'desc')->get();
+        $appartements = Appartement::all();
+        
+        return view('admin.dashboard', compact(
+            'totalCotisations', 
+            'totalDepenses', 
+            'totalAppartements', 
+            'expenseTypes', 
+            'depenses', 
+            'cotisations', 
+            'appartements'
+        ))->with('isClient', true);
     }
     
     public function admin(Request $request)
@@ -37,7 +63,9 @@ class DashboardController extends Controller
             $depensesQuery->where('expense_type_id', $request->type_filter);
         }
         
-        $depenses = $depensesQuery->latest()->paginate(10);
+        $depenses = $depensesQuery->orderBy('date', 'desc')->get();
+        $cotisations = Cotisation::with('appartement')->orderBy('created_at', 'desc')->get();
+        $appartements = Appartement::all();
         
         // Calculer le total des dépenses filtrées
         $totalDepensesFiltered = null;
@@ -51,6 +79,8 @@ class DashboardController extends Controller
             'totalAppartements',
             'expenseTypes',
             'depenses',
+            'cotisations',
+            'appartements',
             'totalDepensesFiltered'
         ));
     }

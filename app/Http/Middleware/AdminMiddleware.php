@@ -20,7 +20,7 @@ class AdminMiddleware
         }
 
         if (!auth()->user()->isAdmin()) {
-            return redirect()->route('dashboard')->with('error', 'Accès non autorisé. Vous devez être administrateur.');
+            return redirect()->route('dashboard')->with('error', 'Accès non autorisé. Vous devez être administrateur pour accéder à cette page.');
         }
 
         return $next($request);

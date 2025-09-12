@@ -8,9 +8,9 @@
         <div class="col-12">
             <div class="d-flex justify-content-end align-items-center mb-4">
                 @if(auth()->user()->isAdmin())
-                    <a href="{{ route('depenses.create') }}" class="btn btn-primary">
+                    <button class="btn btn-primary" onclick="loadModal('{{ route('depenses.create') }}')">
                         <i class="fas fa-plus"></i> Ajouter une Dépense
-                    </a>
+                    </button>
                 @endif
             </div>
 
@@ -93,24 +93,27 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>Type</th>
-                                    <th>Nature</th>
-                                    <th>Mois/Année</th>
+                                    <th>ID</th>
+                                    <th>Type de Dépense</th>
+                                    <th>Année</th>
+                                    <th>Mois</th>
                                     <th>Montant</th>
-                                    <th>Facture</th>
-                                    <th>Date</th>
+                                    <th>Détail</th>
+                                    <th>Nature de Dépense</th>
+                                    <th>Facture/Image</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($depenses as $depense)
                                     <tr>
-                                        <td>
-                                            <span class="badge bg-primary">{{ $depense->expenseType->nom_type }}</span>
-                                        </td>
+                                        <td>{{ $depense->id }}</td>
+                                        <td>{{ $depense->expenseType->nom_type ?? 'N/A' }}</td>
+                                        <td>{{ $depense->annee }}</td>
+                                        <td>{{ $depense->mois }}</td>
+                                        <td>{{ number_format($depense->montant, 2) }} MAD</td>
+                                        <td>{{ $depense->detail }}</td>
                                         <td>{{ $depense->nature_depense }}</td>
-                                        <td>{{ $months[$depense->mois] }} {{ $depense->annee }}</td>
-                                        <td><strong>{{ number_format($depense->montant, 2) }} DH</strong></td>
                                         <td>
                                             @if($depense->facture_image)
                                                 <a href="{{ asset('storage/' . $depense->facture_image) }}" target="_blank" class="btn btn-sm btn-outline-info">
@@ -120,22 +123,20 @@
                                                 <span class="text-muted">Aucune</span>
                                             @endif
                                         </td>
-                                        <td>{{ $depense->created_at->format('d/m/Y') }}</td>
                                         <td>
-                                            <a href="{{ route('depenses.show', $depense) }}" class="btn btn-sm btn-info">Voir</a>
                                             @if(auth()->user()->isAdmin())
-                                                <a href="{{ route('depenses.edit', $depense) }}" class="btn btn-sm btn-warning">Modifier</a>
+                                                <button class="btn btn-sm btn-warning" onclick="loadModal('{{ route('depenses.edit', $depense) }}')"><i class="fas fa-pen"></i></button>
                                                 <form action="{{ route('depenses.destroy', $depense) }}" method="POST" class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr?')">Supprimer</button>
+                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr?')"><i class="fas fa-trash"></i></button>
                                                 </form>
                                             @endif
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="text-center">Aucune dépense trouvée</td>
+                                        <td colspan="9" class="text-center">Aucune dépense trouvée</td>
                                     </tr>
                                 @endforelse
                             </tbody>

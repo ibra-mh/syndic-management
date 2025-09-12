@@ -8,9 +8,9 @@
         <div class="col-12">
             <div class="d-flex justify-content-end align-items-center mb-4">
                 @if(auth()->user()->isAdmin())
-                    <a href="{{ route('cotisations.create') }}" class="btn btn-primary">
+                    <button class="btn btn-primary" onclick="loadModal('{{ route('cotisations.create') }}')">
                         <i class="fas fa-plus"></i> Ajouter une Cotisation
-                    </a>
+                    </button>
                 @endif
             </div>
 
@@ -94,7 +94,7 @@
                                     <th>Montant Garage</th>
                                     <th>Montant Boxe</th>
                                     <th>Total</th>
-                                    <th>Statut</th>
+                                    <!-- <th>Statut</th> -->
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -108,19 +108,27 @@
                                         <td>
                                             {{ $months[$cotisation->mois] }} {{ $cotisation->annee }}
                                         </td>
-                                        <td>{{ number_format($cotisation->montant_appartement, 2) }} DH</td>
-                                        <td>{{ number_format($cotisation->montant_garage, 2) }} DH</td>
-                                        <td>{{ number_format($cotisation->montant_boxe, 2) }} DH</td>
-                                        <td><strong>{{ number_format($cotisation->total_amount, 2) }} DH</strong></td>
                                         <td>
-                                            <span class="badge bg-{{ $cotisation->status_color }}">
-                                                {{ $cotisation->status_text }}
+                                            <span class="@if($cotisation->date_paiement) text-success @elseif(isset($cotisation->is_overdue) && $cotisation->is_overdue) text-danger @endif">
+                                                {{ number_format($cotisation->montant_appartement, 2) }} DH
                                             </span>
                                         </td>
                                         <td>
-                                            <a href="{{ route('cotisations.show', $cotisation) }}" class="btn btn-sm btn-info">Voir</a>
+                                            <span class="@if($cotisation->date_paiement) text-success @elseif(isset($cotisation->is_overdue) && $cotisation->is_overdue) text-danger @endif">
+                                                {{ number_format($cotisation->montant_garage, 2) }} DH
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="@if($cotisation->date_paiement) text-success @elseif(isset($cotisation->is_overdue) && $cotisation->is_overdue) text-danger @endif">
+                                                {{ number_format($cotisation->montant_boxe, 2) }} DH
+                                            </span>
+                                        </td>
+                                        <td><strong>{{ number_format($cotisation->total_amount, 2) }} DH</strong></td>
+                                        <!-- Status badge removed -->
+                                        <td>
+                                            <!-- View button removed -->
                                             @if(auth()->user()->isAdmin())
-                                                <a href="{{ route('cotisations.edit', $cotisation) }}" class="btn btn-sm btn-warning">Modifier</a>
+                                                <button class="btn btn-sm btn-warning" onclick="loadModal('{{ route('cotisations.edit', $cotisation) }}')">Modifier</button>
                                                 <form action="{{ route('cotisations.destroy', $cotisation) }}" method="POST" class="d-inline">
                                                     @csrf
                                                     @method('DELETE')

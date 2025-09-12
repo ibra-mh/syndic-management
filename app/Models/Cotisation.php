@@ -9,6 +9,17 @@ class Cotisation extends Model
 {
     use HasFactory;
 
+    /**
+     * Determine if the cotisation is overdue (not paid and due date is past)
+     * Overdue if no date_paiement and the due date (end of mois/annee) is before today
+     */
+    public function getIsOverdueAttribute()
+    {
+        if ($this->date_paiement) return false;
+        $due = \Carbon\Carbon::create($this->annee, $this->mois, 1)->endOfMonth();
+        return $due->lt(now());
+    }
+
     protected $fillable = [
         'appartement_id',
         'mois',

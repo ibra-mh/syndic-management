@@ -12,7 +12,7 @@ class DepenseController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('admin');
+        $this->middleware('admin')->except(['index', 'show']);
     }
 
     /**
@@ -69,7 +69,7 @@ class DepenseController extends Controller
 
         // Check if request is for modal
         if ($request->ajax() || $request->has('modal')) {
-            return view('admin.depenses.create-modal', compact('expenseTypes', 'months'));
+            return view('admin.depenses.create', compact('expenseTypes', 'months'));
         }
 
         return view('admin.depenses.create', compact('expenseTypes', 'months'));
@@ -86,7 +86,7 @@ class DepenseController extends Controller
             'mois' => 'required|integer|min:1|max:12',
             'montant' => 'required|numeric|min:0',
             'detail' => 'nullable|string',
-            'nature_expense' => 'required|string|max:255',
+            'nature_depense' => 'required|string|max:255',
             'facture_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
