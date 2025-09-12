@@ -47,12 +47,8 @@
                                 <td>{{ $tranche->created_at->format('d/m/Y') }}</td>
                                 <td>
                                     @if(auth()->user()->isAdmin())
-                                        <button class="btn btn-sm btn-warning" onclick="loadModal('{{ route('tranches.edit', $tranche) }}')">
-                                            <i class="fas fa-edit"></i> Modifier
-                                        </button>
-                                        <button class="btn btn-sm btn-danger" onclick="confirmDelete('{{ route('tranches.destroy', $tranche) }}', 'Êtes-vous sûr de vouloir supprimer cette tranche ?')">
-                                            <i class="fas fa-trash"></i> Supprimer
-                                        </button>
+                                        <button class="btn btn-sm btn-warning" onclick="loadModal('{{ route('tranches.edit', $tranche) }}')"><i class="fas fa-pen"></i></button>
+                                        <button class="btn btn-sm btn-danger" onclick="confirmDelete('{{ route('tranches.destroy', $tranche) }}', 'Êtes-vous sûr de vouloir supprimer cette tranche ?')"><i class="fas fa-trash"></i></button>
                                     @endif
                                 </td>
                             </tr>

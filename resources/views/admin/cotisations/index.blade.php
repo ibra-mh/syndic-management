@@ -128,11 +128,11 @@
                                         <td>
                                             <!-- View button removed -->
                                             @if(auth()->user()->isAdmin())
-                                                <button class="btn btn-sm btn-warning" onclick="loadModal('{{ route('cotisations.edit', $cotisation) }}')">Modifier</button>
+                                                <button class="btn btn-sm btn-warning" onclick="loadModal('{{ route('cotisations.edit', $cotisation) }}')"><i class="fas fa-pen"></i></button>
                                                 <form action="{{ route('cotisations.destroy', $cotisation) }}" method="POST" class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr?')">Supprimer</button>
+                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr?')"><i class="fas fa-trash"></i></button>
                                                 </form>
                                             @endif
                                         </td>

@@ -38,12 +38,8 @@
                                 <td>{{ $building->tranche->nom_tranche ?? '-' }}</td>
                                 <td>{{ $building->created_at->format('d/m/Y') }}</td>
                                 <td>
-                                    <button class="btn btn-sm btn-warning" onclick="loadModal('{{ route('buildings.edit', $building) }}')">
-                                        <i class="fas fa-edit"></i> Modifier
-                                    </button>
-                                    <button class="btn btn-sm btn-danger" onclick="confirmDelete('{{ route('buildings.destroy', $building) }}', 'Êtes-vous sûr de vouloir supprimer cet immeuble ?')">
-                                        <i class="fas fa-trash"></i> Supprimer
-                                    </button>
+                                    <button class="btn btn-sm btn-warning" onclick="loadModal('{{ route('buildings.edit', $building) }}')"><i class="fas fa-pen"></i></button>
+                                    <button class="btn btn-sm btn-danger" onclick="confirmDelete('{{ route('buildings.destroy', $building) }}', 'Êtes-vous sûr de vouloir supprimer cet immeuble ?')"><i class="fas fa-trash"></i></button>
                                 </td>
                             </tr>
                         @empty

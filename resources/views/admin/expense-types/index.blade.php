@@ -58,11 +58,11 @@
                                         <td>
                                                 {{-- View button removed --}}
                                             @if(auth()->user()->isAdmin())
-                                                <a href="{{ route('expense-types.edit', $type) }}" class="btn btn-sm btn-warning">Modifier</a>
+                                                <button class="btn btn-sm btn-warning" onclick="loadModal('{{ route('expense-types.edit', $type) }}')"><i class="fas fa-pen"></i></button>
                                                 <form action="{{ route('expense-types.destroy', $type) }}" method="POST" class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr? Cette action supprimera le type et toutes les dépenses associées.')">Supprimer</button>
+                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr? Cette action supprimera le type et toutes les dépenses associées.')"><i class="fas fa-trash"></i></button>
                                                 </form>
                                             @endif
                                         </td>

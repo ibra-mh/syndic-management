@@ -91,12 +91,8 @@
                                     <td>
                                         <div class="btn-group" role="group">
                                             @if(auth()->user()->isAdmin())
-                                            <button class="btn btn-sm btn-outline-primary" onclick="loadModal('{{ route('appartements.edit', $appartement->id) }}')">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete('{{ route('appartements.destroy', $appartement->id) }}', 'Supprimer cet appartement ?')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                                            <button class="btn btn-sm btn-warning" onclick="loadModal('{{ route('appartements.edit', $appartement->id) }}')"><i class="fas fa-pen"></i></button>
+                                            <button class="btn btn-sm btn-danger" onclick="confirmDelete('{{ route('appartements.destroy', $appartement->id) }}', 'Supprimer cet appartement ?')"><i class="fas fa-trash"></i></button>
                                             @endif
                                         </div>
                                     </td>
