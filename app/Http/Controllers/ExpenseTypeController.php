@@ -10,7 +10,7 @@ class ExpenseTypeController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('admin');
+        $this->middleware('admin')->except(['index', 'show']);
     }
 
     /**
@@ -32,7 +32,7 @@ class ExpenseTypeController extends Controller
     {
         // Check if request is for modal
         if ($request->ajax() || $request->has('modal')) {
-            return view('admin.expense-types.create-modal');
+            return view('admin.expense-types.create');
         }
 
         return view('admin.expense-types.create');
@@ -44,7 +44,7 @@ class ExpenseTypeController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'type_name' => 'required|string|max:255|unique:expense_types',
+            'nom_type' => 'required|string|max:255|unique:expense_types,nom_type',
             'description' => 'nullable|string'
         ]);
 

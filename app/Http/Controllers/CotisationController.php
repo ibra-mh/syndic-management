@@ -49,7 +49,7 @@ class CotisationController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         $tranches = Tranche::with('immeubles.appartements')->get();
         $appartements = Appartement::with('immeuble.tranche')->get();
@@ -59,6 +59,11 @@ class CotisationController extends Controller
             5 => 'Mai', 6 => 'Juin', 7 => 'Juillet', 8 => 'Août',
             9 => 'Septembre', 10 => 'Octobre', 11 => 'Novembre', 12 => 'Décembre'
         ];
+
+        // Check if request is for modal (AJAX)
+        if ($request->ajax() || $request->has('modal')) {
+            return view('admin.cotisations.create', compact('tranches', 'appartements', 'months'));
+        }
 
         return view('admin.cotisations.create', compact('tranches', 'appartements', 'months'));
     }

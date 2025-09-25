@@ -29,8 +29,13 @@ class TrancheController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
+        // Check if request is for modal (AJAX)
+        if ($request->ajax() || $request->has('modal')) {
+            return view('admin.tranches.create');
+        }
+        
         return view('admin.tranches.create');
     }
 

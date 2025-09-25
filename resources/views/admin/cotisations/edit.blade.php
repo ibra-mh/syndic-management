@@ -1,14 +1,15 @@
 <!-- Modal Header -->
 <div class="modal-header">
-    <h5 class="modal-title">Ajouter une Cotisation</h5>
+    <h5 class="modal-title">Modifier la Cotisation</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 </div>
 
 <!-- Modal Body -->
 <div class="modal-body">
-    <form method="POST" action="{{ route('cotisations.store') }}" 
+    <form method="POST" action="{{ route('cotisations.update', $cotisation) }}" 
           onsubmit="submitModalForm(this); return false;">
         @csrf
+        @method('PUT')
 
         <div class="row">
             <!-- Appartement Selection -->
@@ -20,7 +21,7 @@
                         id="appartement_id" name="appartement_id" required>
                     <option value="">Sélectionner un appartement</option>
                     @foreach($appartements as $appartement)
-                        <option value="{{ $appartement->id }}" {{ old('appartement_id') == $appartement->id ? 'selected' : '' }}>
+                        <option value="{{ $appartement->id }}" {{ old('appartement_id', $cotisation->appartement_id) == $appartement->id ? 'selected' : '' }}>
                             {{ $appartement->numero }} - {{ $appartement->immeuble->nom_immeuble ?? 'N/A' }}
                         </option>
                     @endforeach
@@ -38,7 +39,7 @@
                     <i class="fas fa-money-bill-wave"></i> Montant Appartement (DH) <span class="text-danger">*</span>
                 </label>
                 <input type="number" step="0.01" class="form-control @error('montant_appartement') is-invalid @enderror" 
-                       id="montant_appartement" name="montant_appartement" value="{{ old('montant_appartement') }}" 
+                       id="montant_appartement" name="montant_appartement" value="{{ old('montant_appartement', $cotisation->montant_appartement) }}" 
                        placeholder="Ex: 250.00" required>
                 @error('montant_appartement')
                     <span class="invalid-feedback" role="alert">
@@ -52,7 +53,7 @@
                     <i class="fas fa-warehouse"></i> Montant Garage (DH)
                 </label>
                 <input type="number" step="0.01" class="form-control @error('montant_garage') is-invalid @enderror" 
-                       id="montant_garage" name="montant_garage" value="{{ old('montant_garage') }}" 
+                       id="montant_garage" name="montant_garage" value="{{ old('montant_garage', $cotisation->montant_garage) }}" 
                        placeholder="Ex: 100.00">
                 @error('montant_garage')
                     <span class="invalid-feedback" role="alert">
@@ -66,7 +67,7 @@
                     <i class="fas fa-box"></i> Montant Boxe (DH)
                 </label>
                 <input type="number" step="0.01" class="form-control @error('montant_boxe') is-invalid @enderror" 
-                       id="montant_boxe" name="montant_boxe" value="{{ old('montant_boxe') }}" 
+                       id="montant_boxe" name="montant_boxe" value="{{ old('montant_boxe', $cotisation->montant_boxe) }}" 
                        placeholder="Ex: 50.00">
                 @error('montant_boxe')
                     <span class="invalid-feedback" role="alert">
@@ -85,7 +86,7 @@
                 <select class="form-select @error('mois') is-invalid @enderror" id="mois" name="mois" required>
                     <option value="">Sélectionner un mois</option>
                     @foreach([1=>'Janvier',2=>'Février',3=>'Mars',4=>'Avril',5=>'Mai',6=>'Juin',7=>'Juillet',8=>'Août',9=>'Septembre',10=>'Octobre',11=>'Novembre',12=>'Décembre'] as $num => $name)
-                        <option value="{{ $num }}" {{ old('mois', date('n')) == $num ? 'selected' : '' }}>{{ $name }}</option>
+                        <option value="{{ $num }}" {{ old('mois', $cotisation->mois) == $num ? 'selected' : '' }}>{{ $name }}</option>
                     @endforeach
                 </select>
                 @error('mois')
@@ -102,7 +103,7 @@
                 <select class="form-select @error('annee') is-invalid @enderror" id="annee" name="annee" required>
                     <option value="">Sélectionner une année</option>
                     @for($y = date('Y')-1; $y <= date('Y')+2; $y++)
-                        <option value="{{ $y }}" {{ old('annee', date('Y')) == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        <option value="{{ $y }}" {{ old('annee', $cotisation->annee) == $y ? 'selected' : '' }}>{{ $y }}</option>
                     @endfor
                 </select>
                 @error('annee')
@@ -111,7 +112,6 @@
                     </span>
                 @enderror
             </div>
-
             <!-- Status removed -->
         </div>
 
@@ -122,7 +122,7 @@
                     <i class="fas fa-calendar-check"></i> Date de Paiement
                 </label>
                 <input type="date" class="form-control @error('date_paiement') is-invalid @enderror" 
-                       id="date_paiement" name="date_paiement" value="{{ old('date_paiement') }}">
+                       id="date_paiement" name="date_paiement" value="{{ old('date_paiement', $cotisation->date_paiement) }}">
                 <small class="form-text text-muted">Laissez vide si pas encore payé</small>
                 @error('date_paiement')
                     <span class="invalid-feedback" role="alert">
@@ -138,7 +138,7 @@
                 <i class="fas fa-times"></i> Annuler
             </button>
             <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save"></i> Enregistrer
+                <i class="fas fa-save"></i> Mettre à jour
             </button>
         </div>
     </form>

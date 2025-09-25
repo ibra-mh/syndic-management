@@ -29,7 +29,7 @@
                 <table class="table table-hover">
                     <thead class="table-light">
                         <tr>
-                            <th>ID</th>
+                            {{-- <th>ID</th> --}}
                             <th>Nom</th>
                             <th>Nombre d'Immeubles</th>
                             <th>Créé le</th>
@@ -39,23 +39,16 @@
                     <tbody>
                         @forelse($tranches as $tranche)
                             <tr>
-                                <td>{{ $tranche->id }}</td>
+                                {{-- <td>{{ $tranche->id }}</td> --}}
                                 <td><strong>{{ $tranche->nom_tranche }}</strong></td>
                                 <td>
                                     <span class="badge bg-info">{{ $tranche->immeubles_count ?? $tranche->immeubles->count() }}</span>
                                 </td>
                                 <td>{{ $tranche->created_at->format('d/m/Y') }}</td>
                                 <td>
-                                    <button class="btn btn-sm btn-info" onclick="loadModal('{{ route('tranches.show', $tranche) }}', 'viewModal')">
-                                        <i class="fas fa-eye"></i> Voir
-                                    </button>
                                     @if(auth()->user()->isAdmin())
-                                        <button class="btn btn-sm btn-warning" onclick="loadModal('{{ route('tranches.edit', $tranche) }}')">
-                                            <i class="fas fa-edit"></i> Modifier
-                                        </button>
-                                        <button class="btn btn-sm btn-danger" onclick="confirmDelete('{{ route('tranches.destroy', $tranche) }}', 'Êtes-vous sûr de vouloir supprimer cette tranche ?')">
-                                            <i class="fas fa-trash"></i> Supprimer
-                                        </button>
+                                        <button class="btn btn-sm btn-warning" onclick="loadModal('{{ route('tranches.edit', $tranche) }}')"><i class="fas fa-pen"></i></button>
+                                        <button class="btn btn-sm btn-danger" onclick="confirmDelete('{{ route('tranches.destroy', $tranche) }}', 'Êtes-vous sûr de vouloir supprimer cette tranche ?')"><i class="fas fa-trash"></i></button>
                                     @endif
                                 </td>
                             </tr>

@@ -4,11 +4,13 @@
 
 @section('content')
 <div class="container-fluid">
+    @if(auth()->user()->isAdmin())
     <div class="d-flex justify-content-end align-items-center mb-4">
         <button class="btn btn-primary" onclick="loadModal('{{ route('appartements.create') }}')">
             <i class="fas fa-plus"></i> Nouvel Appartement
         </button>
     </div>
+    @endif
 
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -72,7 +74,7 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                {{-- <th>ID</th> --}}
                                 <th>Nom Appartement</th>
                                 <th>Immeuble</th>
                                 <th>Tranche</th>
@@ -82,21 +84,16 @@
                         <tbody>
                             @foreach($appartements as $appartement)
                                 <tr>
-                                    <td>{{ $appartement->id }}</td>
-                                    <td>{{ $appartement->nom_app }}</td>
+                                    {{-- <td>{{ $appartement->id }}</td> --}}
+                                    <td>{{ $appartement->numero }}</td>
                                     <td>{{ $appartement->immeuble->nom_immeuble ?? 'N/A' }}</td>
                                     <td>{{ $appartement->immeuble->tranche->nom_tranche ?? 'N/A' }}</td>
                                     <td>
                                         <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-outline-info" onclick="loadModal('{{ route('appartements.show', $appartement->id) }}', 'viewModal')">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-primary" onclick="loadModal('{{ route('appartements.edit', $appartement->id) }}')">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete('{{ route('appartements.destroy', $appartement->id) }}', 'Supprimer cet appartement ?')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                                            @if(auth()->user()->isAdmin())
+                                            <button class="btn btn-sm btn-warning" onclick="loadModal('{{ route('appartements.edit', $appartement->id) }}')"><i class="fas fa-pen"></i></button>
+                                            <button class="btn btn-sm btn-danger" onclick="confirmDelete('{{ route('appartements.destroy', $appartement->id) }}', 'Supprimer cet appartement ?')"><i class="fas fa-trash"></i></button>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>
@@ -113,9 +110,11 @@
                 <div class="text-center py-4">
                     <i class="fas fa-door-open fa-3x text-muted mb-3"></i>
                     <p class="text-muted">Aucun appartement trouvé</p>
+                    @if(auth()->user()->isAdmin())
                     <button class="btn btn-primary" onclick="loadModal('{{ route('appartements.create') }}')">
                         <i class="fas fa-plus"></i> Ajouter le premier appartement
                     </button>
+                    @endif
                 </div>
             @endif
         </div>

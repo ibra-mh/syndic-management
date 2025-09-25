@@ -236,16 +236,18 @@
                         <i class="fas fa-tachometer-alt"></i> Dashboard
                     </a>
                 </li>
+                @if(auth()->user()->isAdmin())
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('tranches.*') ? 'active' : '' }}" href="{{ route('tranches.index') }}">
                         <i class="fas fa-layer-group"></i> Tranches
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('immeubles.*') ? 'active' : '' }}" href="{{ route('immeubles.index') }}">
-                        <i class="fas fa-building"></i> Immeubles
+                    <a class="nav-link {{ request()->routeIs('buildings.*') ? 'active' : '' }}" href="{{ route('buildings.index') }}">
+                        <i class="fas fa-city"></i> Immeubles
                     </a>
                 </li>
+                @endif
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('appartements.*') ? 'active' : '' }}" href="{{ route('appartements.index') }}">
                         <i class="fas fa-door-open"></i> Appartements
@@ -261,13 +263,16 @@
                         <i class="fas fa-receipt"></i> Dépenses
                     </a>
                 </li>
+                @if(auth()->user()->isAdmin())
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('expense-types.*') ? 'active' : '' }}" href="{{ route('expense-types.index') }}">
                         <i class="fas fa-tags"></i> Types de Dépenses
                     </a>
                 </li>
+                @endif
             </ul>
 
+            @if(auth()->user()->isAdmin())
             <h6 class="sidebar-heading">
                 <span>Actions Rapides</span>
             </h6>
@@ -282,6 +287,7 @@
                         <i class="fas fa-plus"></i> Nouveau Type
                     </button>
                 </li>
+            @endif
                 <li class="nav-item">
                     <form method="POST" action="{{ route('logout') }}" class="d-inline">
                         @csrf
@@ -342,16 +348,30 @@
     <script>
         // Fonction pour charger le contenu dans un modal
         function loadModal(url, modalId = 'formModal') {
-            fetch(url)
-                .then(response => response.text())
+            console.log('Loading modal from URL:', url);
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'text/html'
+                }
+            })
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    return response.text();
+                })
                 .then(html => {
+                    console.log('Received HTML length:', html.length);
                     document.getElementById(modalId + 'Content').innerHTML = html;
                     const modal = new bootstrap.Modal(document.getElementById(modalId));
                     modal.show();
                 })
                 .catch(error => {
-                    console.error('Erreur:', error);
-                    alert('Erreur lors du chargement du formulaire');
+                    console.error('Erreur lors du chargement du modal:', error);
+                    alert('Erreur lors du chargement du formulaire: ' + error.message);
                 });
         }
 

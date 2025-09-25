@@ -8,9 +8,9 @@
         <div class="col-12">
             <div class="d-flex justify-content-end align-items-center mb-4">
                 @if(auth()->user()->isAdmin())
-                    <a href="{{ route('expense-types.create') }}" class="btn btn-primary">
+                    <button class="btn btn-primary" onclick="loadModal('{{ route('expense-types.create') }}')">
                         <i class="fas fa-plus"></i> Ajouter un Type
-                    </a>
+                    </button>
                 @endif
             </div>
 
@@ -35,7 +35,7 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
+                                    {{-- <th>ID</th> --}}
                                     <th>Nom du Type</th>
                                     <th>Description</th>
                                     <th>Nombre de Dépenses</th>
@@ -46,7 +46,7 @@
                             <tbody>
                                 @forelse($expenseTypes as $type)
                                     <tr>
-                                        <td>{{ $type->id }}</td>
+                                        {{-- <td>{{ $type->id }}</td> --}}
                                         <td>
                                             <strong>{{ $type->nom_type }}</strong>
                                         </td>
@@ -56,13 +56,13 @@
                                         </td>
                                         <td>{{ $type->created_at->format('d/m/Y') }}</td>
                                         <td>
-                                            <a href="{{ route('expense-types.show', $type) }}" class="btn btn-sm btn-info">Voir</a>
+                                                {{-- View button removed --}}
                                             @if(auth()->user()->isAdmin())
-                                                <a href="{{ route('expense-types.edit', $type) }}" class="btn btn-sm btn-warning">Modifier</a>
+                                                <button class="btn btn-sm btn-warning" onclick="loadModal('{{ route('expense-types.edit', $type) }}')"><i class="fas fa-pen"></i></button>
                                                 <form action="{{ route('expense-types.destroy', $type) }}" method="POST" class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr? Cette action supprimera le type et toutes les dépenses associées.')">Supprimer</button>
+                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr? Cette action supprimera le type et toutes les dépenses associées.')"><i class="fas fa-trash"></i></button>
                                                 </form>
                                             @endif
                                         </td>
