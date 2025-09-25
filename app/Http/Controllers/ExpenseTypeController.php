@@ -44,7 +44,7 @@ class ExpenseTypeController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'type_name' => 'required|string|max:255|unique:expense_types',
+            'nom_type' => 'required|string|max:255|unique:expense_types,nom_type',
             'description' => 'nullable|string'
         ]);
 

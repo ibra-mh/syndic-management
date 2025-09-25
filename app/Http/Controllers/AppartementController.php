@@ -71,7 +71,7 @@ class AppartementController extends Controller
     {
         $validated = $request->validate([
             'immeuble_id' => 'required|exists:immeubles,id',
-            'nom_app' => 'required|string|max:255',
+            'numero' => 'required|string|max:255',
         ]);
 
         Appartement::create($validated);
@@ -113,7 +113,7 @@ class AppartementController extends Controller
     {
         $validated = $request->validate([
             'immeuble_id' => 'required|exists:immeubles,id',
-            'nom_app' => 'required|string|max:255',
+            'numero' => 'required|string|max:255',
         ]);
 
         $appartement->update($validated);

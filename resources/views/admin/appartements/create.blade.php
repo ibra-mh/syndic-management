@@ -6,21 +6,29 @@
 
 <!-- Modal Body -->
 <div class="modal-body">
-    <form action="{{ route('appartements.store') }}" method="POST" 
-          onsubmit="submitModalForm(this); return false;">
+    <form action="{{ route('appartements.store') }}" method="POST" onsubmit="submitModalForm(this); return false;">
+
         @csrf
-        
+        <div class="mb-3">
+            <label for="tranche_id" class="form-label">
+                <i class="fas fa-layer-group"></i> Tranche <span class="text-danger">*</span>
+            </label>
+            <select name="tranche_id" id="tranche_id" class="form-select" required>
+                <option value="">Sélectionnez une tranche</option>
+                @foreach($tranches as $tranche)
+                    <option value="{{ $tranche->id }}" {{ old('tranche_id') == $tranche->id ? 'selected' : '' }}>{{ $tranche->nom_tranche }}</option>
+                @endforeach
+            </select>
+        </div>
         <div class="mb-3">
             <label for="immeuble_id" class="form-label">
                 <i class="fas fa-building"></i> Immeuble <span class="text-danger">*</span>
             </label>
-            <select name="immeuble_id" id="immeuble_id" 
-                    class="form-select @error('immeuble_id') is-invalid @enderror" required>
-                <option value="">Sélectionner un immeuble</option>
+            <select name="immeuble_id" id="immeuble_id" class="form-select @error('immeuble_id') is-invalid @enderror" required>
+                <option value="">Sélectionnez un immeuble</option>
                 @foreach($immeubles as $immeuble)
-                    <option value="{{ $immeuble->id }}" 
-                            {{ (old('immeuble_id', request('immeuble_id')) == $immeuble->id) ? 'selected' : '' }}>
-                        {{ $immeuble->nom_immeuble }} ({{ $immeuble->tranche->nom_tranche ?? 'N/A' }})
+                    <option value="{{ $immeuble->id }}" data-tranche="{{ $immeuble->tranche_id }}" {{ (old('immeuble_id', request('immeuble_id')) == $immeuble->id) ? 'selected' : '' }}>
+                        {{ $immeuble->nom_immeuble }}
                     </option>
                 @endforeach
             </select>
@@ -28,16 +36,41 @@
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
-
+        <div id="tranche-immeuble-error" class="text-danger mb-2" style="display:none;"></div>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var trancheSelect = document.getElementById('tranche_id');
+            var immeubleSelect = document.getElementById('immeuble_id');
+            var errorDiv = document.getElementById('tranche-immeuble-error');
+            var submitBtn = document.querySelector('button[type="submit"]');
+            function validateTrancheImmeuble() {
+                var trancheId = trancheSelect.value;
+                var immeubleOption = immeubleSelect.options[immeubleSelect.selectedIndex];
+                var immeubleTranche = immeubleOption ? immeubleOption.getAttribute('data-tranche') : null;
+                if (trancheId && immeubleSelect.value && trancheId !== immeubleTranche) {
+                    errorDiv.textContent = "Cet immeuble n’appartient pas à cette tranche.";
+                    errorDiv.style.display = '';
+                    submitBtn.disabled = true;
+                } else {
+                    errorDiv.textContent = '';
+                    errorDiv.style.display = 'none';
+                    submitBtn.disabled = false;
+                }
+            }
+            trancheSelect.addEventListener('change', validateTrancheImmeuble);
+            immeubleSelect.addEventListener('change', validateTrancheImmeuble);
+            validateTrancheImmeuble();
+        });
+        </script>
         <div class="mb-3">
-            <label for="nom_app" class="form-label">
+            <label for="numero" class="form-label">
                 <i class="fas fa-door-open"></i> Numéro d'Appartement <span class="text-danger">*</span>
             </label>
-            <input type="text" name="nom_app" id="nom_app" 
-                   class="form-control @error('nom_app') is-invalid @enderror" 
-                   value="{{ old('nom_app') }}" 
+            <input type="text" name="numero" id="numero" 
+                   class="form-control @error('numero') is-invalid @enderror" 
+                   value="{{ old('numero') }}" 
                    placeholder="Ex: A1, B2, 101, etc." required>
-            @error('nom_app')
+            @error('numero')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
