@@ -73,6 +73,16 @@
             text-align: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             margin-bottom: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @media (max-width: 767.98px) {
+            .sidebar-brand {
+                justify-content: space-between;
+                text-align: left;
+            }
         }
 
         .sidebar-brand h4 {
@@ -184,18 +194,80 @@
             box-shadow: 0 0.25rem 2rem 0 rgba(58, 59, 69, 0.25) !important;
         }
 
+        /* Mobile Navigation */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            padding: 1rem;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .mobile-nav-brand {
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.25rem;
+            text-decoration: none;
+        }
+
+        .mobile-menu-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
         /* Responsive Design */
         @media (max-width: 767.98px) {
+            .mobile-nav {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
             .sidebar {
-                top: 0;
-                width: 100%;
-                height: auto;
-                position: relative;
-                background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 1001;
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay.show {
+                display: block;
             }
             
             .main-content {
                 margin-left: 0;
+                margin-top: 70px;
+                width: 100%;
+            }
+
+            .top-bar {
+                padding: 1rem;
+            }
+
+            .content-area {
+                padding: 1rem;
             }
         }
 
@@ -219,11 +291,29 @@
     </style>
 </head>
 <body>
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav">
+        <a href="{{ route('dashboard') }}" class="mobile-nav-brand">
+            <i class="fas fa-building"></i> Syndic Pro
+        </a>
+        <button class="mobile-menu-btn" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
     <!-- Sidebar for Admin -->
     <div class="sidebar">
         <div class="sidebar-brand">
-            <h4><i class="fas fa-building"></i> Syndic Pro</h4>
-            <small>Gestion Immobilière</small>
+            <div>
+                <h4><i class="fas fa-building"></i> Syndic Pro</h4>
+                <small>Gestion Immobilière</small>
+            </div>
+            <button class="mobile-menu-btn d-md-none" onclick="closeSidebar()" style="margin-left: auto;">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
         
         <div class="position-sticky">
@@ -402,6 +492,30 @@
                 alert('Erreur lors de la soumission du formulaire');
             });
         }
+
+        // Mobile menu functions
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+        }
+
+        function closeSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+        }
+
+        // Close sidebar when window is resized to desktop
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 767) {
+                closeSidebar();
+            }
+        });
 
         // Fonction pour supprimer un élément
         function confirmDelete(url, message = 'Êtes-vous sûr de vouloir supprimer cet élément ?') {

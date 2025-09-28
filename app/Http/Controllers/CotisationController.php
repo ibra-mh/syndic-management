@@ -6,6 +6,7 @@ use App\Models\Cotisation;
 use App\Models\Appartement;
 use App\Models\Immeuble;
 use App\Models\Tranche;
+use App\Services\SyndicConfigService;
 use Illuminate\Http\Request;
 
 class CotisationController extends Controller
@@ -32,16 +33,12 @@ class CotisationController extends Controller
 
         $cotisations = $query->orderBy('annee', 'desc')
                            ->orderBy('mois', 'desc')
-                           ->paginate(15);
+                           ->paginate(SyndicConfigService::getPaginationPerPage());
 
         // Get filter options
         $appartements = Appartement::with('immeuble')->get();
-        $years = range(date('Y'), date('Y') - 5); // Current year and 5 years back
-        $months = [
-            1 => 'Janvier', 2 => 'Février', 3 => 'Mars', 4 => 'Avril',
-            5 => 'Mai', 6 => 'Juin', 7 => 'Juillet', 8 => 'Août',
-            9 => 'Septembre', 10 => 'Octobre', 11 => 'Novembre', 12 => 'Décembre'
-        ];
+        $years = SyndicConfigService::getYearRange();
+        $months = SyndicConfigService::getMonthsArray();
 
         return view('admin.cotisations.index', compact('cotisations', 'appartements', 'years', 'months'));
     }
@@ -53,19 +50,17 @@ class CotisationController extends Controller
     {
         $tranches = Tranche::with('immeubles.appartements')->get();
         $appartements = Appartement::with('immeuble.tranche')->get();
-        
-        $months = [
-            1 => 'Janvier', 2 => 'Février', 3 => 'Mars', 4 => 'Avril',
-            5 => 'Mai', 6 => 'Juin', 7 => 'Juillet', 8 => 'Août',
-            9 => 'Septembre', 10 => 'Octobre', 11 => 'Novembre', 12 => 'Décembre'
-        ];
+        $months = SyndicConfigService::getMonthsArray();
+        $defaultAmounts = SyndicConfigService::getDefaultCotisationAmounts();
+
+        $data = compact('tranches', 'appartements', 'months', 'defaultAmounts');
 
         // Check if request is for modal (AJAX)
         if ($request->ajax() || $request->has('modal')) {
-            return view('admin.cotisations.create', compact('tranches', 'appartements', 'months'));
+            return view('admin.cotisations.create', $data);
         }
 
-        return view('admin.cotisations.create', compact('tranches', 'appartements', 'months'));
+        return view('admin.cotisations.create', $data);
     }
 
     /**
@@ -73,14 +68,7 @@ class CotisationController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'appartement_id' => 'required|exists:appartements,id',
-            'mois' => 'required|integer|min:1|max:12',
-            'annee' => 'required|integer|min:2020|max:' . (date('Y') + 1),
-            'montant_appartement' => 'required|numeric|min:0',
-            'montant_garage' => 'nullable|numeric|min:0',
-            'montant_boxe' => 'nullable|numeric|min:0',
-        ]);
+        $validated = $request->validate(SyndicConfigService::getCotisationValidationRules());
 
         // Set defaults for optional fields
         $validated['montant_garage'] = $validated['montant_garage'] ?? 0;
@@ -93,12 +81,12 @@ class CotisationController extends Controller
                               ->first();
 
         if ($existing) {
-            return back()->withErrors(['duplicate' => 'Une cotisation existe déjà pour cet appartement ce mois-ci.'])->withInput();
+            return back()->withErrors(['duplicate' => __('app.cotisation.duplicate_error')])->withInput();
         }
 
         Cotisation::create($validated);
 
-        return redirect()->route('cotisations.index')->with('success', 'Cotisation créée avec succès.');
+        return redirect()->route('cotisations.index')->with('success', __('app.cotisation.created_success'));
     }
 
     /**
@@ -117,12 +105,7 @@ class CotisationController extends Controller
     {
         $tranches = Tranche::with('immeubles.appartements')->get();
         $appartements = Appartement::with('immeuble.tranche')->get();
-        
-        $months = [
-            1 => 'Janvier', 2 => 'Février', 3 => 'Mars', 4 => 'Avril',
-            5 => 'Mai', 6 => 'Juin', 7 => 'Juillet', 8 => 'Août',
-            9 => 'Septembre', 10 => 'Octobre', 11 => 'Novembre', 12 => 'Décembre'
-        ];
+        $months = SyndicConfigService::getMonthsArray();
 
         $cotisation->load(['appartement.immeuble.tranche']);
 

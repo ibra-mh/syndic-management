@@ -233,10 +233,10 @@
                                                     </td>
                                                     <td>
                                                         <div class="btn-group" role="group">
-                                                            <button class="btn btn-sm btn-outline-primary" onclick="loadModal('{{ route('depenses.edit', $depense->id) }}')">
-                                                                <i class="fas fa-edit"></i>
+                                                            <button class="btn btn-sm btn-warning" onclick="loadModal('{{ route('depenses.edit', $depense->id) }}')">
+                                                                <i class="fas fa-pen"></i>
                                                             </button>
-                                                            <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete('{{ route('depenses.destroy', $depense->id) }}', 'Supprimer cette dépense ?')">
+                                                            <button class="btn btn-sm btn-danger" onclick="confirmDelete('{{ route('depenses.destroy', $depense->id) }}', 'Supprimer cette dépense ?')">
                                                                 <i class="fas fa-trash"></i>
                                                             </button>
                                                         </div>

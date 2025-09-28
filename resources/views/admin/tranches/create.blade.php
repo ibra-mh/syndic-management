@@ -67,6 +67,29 @@
                             @enderror
                         </div>
 
+                        <div class="mb-3">
+                            <label for="status" class="form-label">
+                                <i class="fas fa-toggle-on"></i> Statut <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-control @error('status') is-invalid @enderror" 
+                                    id="status" 
+                                    name="status" 
+                                    required>
+                                <option value="">Sélectionner un statut</option>
+                                <option value="actif" {{ old('status', isset($tranche) ? $tranche->status : 'actif') == 'actif' ? 'selected' : '' }}>
+                                    Actif
+                                </option>
+                                <option value="inactif" {{ old('status', isset($tranche) ? $tranche->status : '') == 'inactif' ? 'selected' : '' }}>
+                                    Inactif
+                                </option>
+                            </select>
+                            @error('status')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+
                         <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save"></i> {{ isset($tranche) ? 'Mettre à jour' : 'Créer la Tranche' }}

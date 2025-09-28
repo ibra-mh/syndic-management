@@ -33,7 +33,7 @@ class TrancheController extends Controller
     {
         // Check if request is for modal (AJAX)
         if ($request->ajax() || $request->has('modal')) {
-            return view('admin.tranches.create');
+            return view('admin.tranches.modal-create');
         }
         
         return view('admin.tranches.create');
@@ -51,6 +51,15 @@ class TrancheController extends Controller
         ]);
 
         Tranche::create($validated);
+
+        // Handle AJAX requests (modal forms)
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Tranche créée avec succès.',
+                'redirect' => route('tranches.index')
+            ]);
+        }
 
         return redirect()->route('tranches.index')
             ->with('success', 'Section created successfully.');
@@ -87,6 +96,15 @@ class TrancheController extends Controller
         ]);
 
         $tranche->update($validated);
+
+        // Handle AJAX requests (modal forms)
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Tranche modifiée avec succès.',
+                'redirect' => route('tranches.index')
+            ]);
+        }
 
         return redirect()->route('tranches.index')
             ->with('success', 'Section updated successfully.');

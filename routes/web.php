@@ -1,6 +1,10 @@
 
 <?php
 
+// Language routes
+use App\Http\Controllers\LanguageController;
+Route::get('/language/{locale}', [LanguageController::class, 'change'])->name('language.change');
+
 // Buildings routes
 use App\Http\Controllers\BuildingController;
 Route::get('/buildings', [BuildingController::class, 'index'])->name('buildings.index');

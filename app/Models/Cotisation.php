@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\SyndicConfigService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -54,21 +55,11 @@ class Cotisation extends Model
     }
 
     /**
-     * Get the status color based on payment according to specifications
-     * Red (0 red): If total cotisation amount equals 0
-     * Green (full 3000 green): If total cotisation equals expected full amount (3000)
-     * Black (default): Normal state
+     * Get the status color based on payment using configuration
      */
     public function getStatusColorAttribute()
     {
-        $total = $this->total_amount;
-        
-        if ($total == 0) {
-            return 'danger'; // Red
-        } elseif ($total >= 3000) { // Full expected amount
-            return 'success'; // Green
-        }
-        return 'dark'; // Black/default
+        return SyndicConfigService::getCotisationStatusColor($this->total_amount);
     }
 
     /**
